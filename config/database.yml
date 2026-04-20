@@ -1,0 +1,23 @@
+basedefault: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV['POSTGRES_DATABASE_CONNECTIONS_POOL'] || 5 %>
+  sslmode: <%= ENV['POSTGRES_SSLMODE'] || "prefer"  %>
+  host: <%= ENV['POSTGRES_HOST']  %>
+  port: <%= ENV['POSTGRES_APPLICATION_PORT'] || "5432" %>
+  username: <%= ENV['POSTGRES_USER'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
+
+development:
+  <<: *default
+  database: <%= ENV['POSTGRES_APPLICATION_DATABASE'] || "aurospace_development" %>
+
+test:
+  <<: *default
+  database: <%= ENV['POSTGRES_APPLICATION_DATABASE'] || "aurospace_test" %><%= ENV['TEST_ENV_NUMBER'] %>
+
+
+production:
+  primary:
+    <<: *default
+    database: <%= ENV['POSTGRES_APPLICATION_DATABASE'] || "aurospace_production" %>
