@@ -5,7 +5,7 @@ RSpec.describe 'Users items', type: :request do
     let!(:user) { FactoryBot.create(:user) }
 
     it 'returns a list of users' do
-      get('/users')
+      get('/users', headers: auth_headers(user))
 
       expect(response).to have_http_status(:success)
 
@@ -19,7 +19,8 @@ RSpec.describe 'Users items', type: :request do
     let(:expected_attributes) { ['id', 'email'] }
 
     it 'create and return user' do
-      post("/users", params: { user: { email: email } })
+      creator = FactoryBot.create(:user)
+      post("/users", params: { user: { email: email } }, headers: auth_headers(creator))
 
       expect(response).to have_http_status(:success)
       expect(json_response_body).to include(*expected_attributes)

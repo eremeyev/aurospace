@@ -9,7 +9,7 @@ describe Orders::Success do
     let(:user) { FactoryBot.create(:user) }
     let(:balance) { 100 }
     let(:payment_account) { FactoryBot.create(:payment_account, user: user, balance: balance) }
-    let(:order) { FactoryBot.create(:order, user: user, status: :pending, total_amount: 10) }
+    let(:order) { FactoryBot.create(:order, user: user, payment_account: payment_account, status: :pending, total_amount: 10) }
 
     context 'happy path' do
       it { is_expected.to be_success }
@@ -27,6 +27,30 @@ describe Orders::Success do
       let(:balance) { 5 }
 
       it { is_expected.to be_failure }
+    end
+  end
+
+  describe Orders::Success, :n_plus_one do
+    let(:user) { FactoryBot.create(:user) }
+    let(:account) { FactoryBot.create(:payment_account, user: user, balance: 200) }
+    let(:order) { FactoryBot.create(:order, user: user, payment_account: account, status: :pending, total_amount: 100) }
+    it 'handles concurrent debit requests' do
+      key = SecureRandom.uuid
+
+      threads = 3.times.map do
+        Thread.new do
+          described_class.new(
+            order: order,
+            payment_account: account,
+            idempotency_key: "#{key}-#{Thread.current.object_id}"
+          ).call
+        end
+      end
+
+      results = threads.map(&:value)
+
+      expect(results.count(&:success?)).to eq(1)
+      expect(account.reload.balance).to eq(100)
     end
   end
 end

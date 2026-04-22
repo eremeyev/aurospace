@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 
 gem 'rails', '~> 8.1.3'
+gem 'devise'
+gem 'pundit'
 gem 'propshaft'
 gem 'pg'
 gem 'puma', '>= 5.0'
@@ -51,4 +53,7 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem 'capybara'
   gem 'selenium-webdriver'
+  gem 'shoulda-matchers'
+  gem 'rails-controller-testing'
+  gem 'pundit-matchers'
 end
