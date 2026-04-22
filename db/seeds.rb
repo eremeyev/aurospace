@@ -7,3 +7,6 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+User.create!(email: 'test@test.com', api_token: SecureRandom.hex(32))
+User.create!(email: 'test2@test.com', api_token: SecureRandom.hex(32))
+User.create!(email: 'test3@test.com', api_token: SecureRandom.hex(32))

@@ -9,10 +9,11 @@ RSpec.describe 'Orders API', type: :request do
     let(:expected_attributes) { %w[status total_amount id] }
 
     it 'returns a list of users' do
-      post("/orders/#{order.id}/purchase", params: { payment_account_id: payment_account.id })
+      post("/orders/#{order.id}/purchase",
+           params: { payment_account_id: payment_account.id },
+           headers: auth_headers(user))
 
       expect(response).to have_http_status(:success)
-      p json_response_body
       expect(json_response_body).to include(*expected_attributes)
     end
   end
@@ -30,7 +31,7 @@ RSpec.describe 'Orders API', type: :request do
     let(:expected_attributes) { %w[status total_amount] }
 
     it 'create and return user' do
-      post("/orders/#{order.id}/cancel")
+      post("/orders/#{order.id}/cancel", headers: auth_headers(user))
 
       expect(response).to have_http_status(:success)
       expect(json_response_body).to include(*expected_attributes)
