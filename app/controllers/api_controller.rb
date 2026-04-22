@@ -5,7 +5,7 @@ class ApiController < ActionController::API
   include Pundit::Authorization
 
   rescue_from Pundit::NotAuthorizedError do
-    render json: { error: { code: "forbidden", message: "Not authorized" } }, status: :forbidden
+    render json: { error: { code: 'forbidden', message: 'Not authorized' } }, status: :forbidden
   end
 
   before_action :authenticate_user!
@@ -27,7 +27,7 @@ class ApiController < ActionController::API
     when Failure
       render(json: { error: normalize_failure(result.failure) }, status: :unprocessable_entity)
     else
-      render(json: { error: { code: "internal_error", message: "Unexpected result" } }, status: :internal_server_error)
+      render(json: { error: { code: 'internal_error', message: 'Unexpected result' } }, status: :internal_server_error)
     end
   end
 
@@ -36,15 +36,15 @@ class ApiController < ActionController::API
   def authenticate_user!
     return if current_user.present?
 
-    render json: { error: { code: "unauthorized", message: "Invalid or missing token" } }, status: :unauthorized
+    render json: { error: { code: 'unauthorized', message: 'Invalid or missing token' } }, status: :unauthorized
   end
 
   def bearer_token
-    auth = request.headers["Authorization"].to_s
+    auth = request.headers['Authorization'].to_s
     return if auth.blank?
 
-    scheme, token = auth.split(" ", 2)
-    return if scheme != "Bearer"
+    scheme, token = auth.split(' ', 2)
+    return if scheme != 'Bearer'
 
     token.presence
   end
@@ -52,9 +52,9 @@ class ApiController < ActionController::API
   def normalize_failure(failure)
     case failure
     when Hash
-      { code: (failure[:code] || "unprocessable_entity"), message: (failure[:base] || failure[:message] || failure.to_s) }
+      { code: (failure[:code] || 'unprocessable_entity'), message: (failure[:base] || failure[:message] || failure.to_s) }
     else
-      { code: "unprocessable_entity", message: failure.to_s }
+      { code: 'unprocessable_entity', message: failure.to_s }
     end
   end
 end

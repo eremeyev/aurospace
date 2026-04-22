@@ -24,4 +24,3 @@ class AddApiTokenToUsers < ActiveRecord::Migration[8.1]
     remove_column :users, :api_token
   end
 end
-
