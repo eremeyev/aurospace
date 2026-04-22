@@ -9,7 +9,7 @@ describe Orders::Cancel do
     let(:user) { FactoryBot.create(:user) }
     let(:balance) { 90 }
     let(:payment_account) { FactoryBot.create(:payment_account, user: user, balance: balance) }
-    let(:order) { FactoryBot.create(:order, user: user, status: :success, total_amount: 10) }
+    let(:order) { FactoryBot.create(:order, payment_account: payment_account, user: user, status: :success, total_amount: 10) }
     let(:transaction) do
       FactoryBot.create(:transaction,
                         order: order,

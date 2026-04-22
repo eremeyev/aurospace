@@ -10,22 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_21_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_22_155049) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "orders", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "idempotency_key"
+    t.bigint "payment_account_id"
+    t.datetime "processed_at"
     t.integer "status", default: 0, null: false
     t.decimal "total_amount", precision: 10, scale: 2, default: "0.0", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["idempotency_key"], name: "index_orders_on_idempotency_key", unique: true
+    t.index ["payment_account_id", "status"], name: "index_orders_on_payment_account_id_and_status"
+    t.index ["payment_account_id"], name: "index_orders_on_payment_account_id"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
   create_table "payment_accounts", force: :cascade do |t|
     t.decimal "balance", precision: 10, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
+    t.integer "lock_version", default: 0, null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_payment_accounts_on_user_id"
@@ -33,6 +40,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_21_090000) do
 
   create_table "transactions", force: :cascade do |t|
     t.decimal "amount", precision: 10, scale: 2, null: false
+    t.decimal "balance_after", precision: 12, scale: 2
     t.datetime "created_at", null: false
     t.string "description", null: false
     t.bigint "order_id", null: false
@@ -40,6 +48,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_21_090000) do
     t.integer "transaction_type", null: false
     t.datetime "updated_at", null: false
     t.index ["order_id"], name: "index_transactions_on_order_id"
+    t.index ["payment_account_id", "created_at"], name: "index_transactions_on_payment_account_id_and_created_at", order: { created_at: :desc }
     t.index ["payment_account_id"], name: "index_transactions_on_payment_account_id"
   end
 
@@ -52,6 +61,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_21_090000) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "orders", "payment_accounts"
   add_foreign_key "orders", "users"
   add_foreign_key "payment_accounts", "users"
   add_foreign_key "transactions", "orders"

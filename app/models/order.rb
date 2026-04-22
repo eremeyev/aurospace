@@ -9,6 +9,7 @@ class Order < ApplicationRecord
   belongs_to :user
 
   has_many :transactions, dependent: :destroy
+  belongs_to :payment_account
 
   validates :total_amount, presence: true, numericality: { greater_than: 0 }
 end
