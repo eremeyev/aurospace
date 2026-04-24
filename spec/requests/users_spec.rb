@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Users items', type: :request do
   describe 'GET /users' do
-    let!(:user) { FactoryBot.create(:user) }
+    let!(:user) { create(:user) }
 
     it 'returns a list of users' do
       get('/users', headers: auth_headers(user))
@@ -19,7 +19,7 @@ RSpec.describe 'Users items', type: :request do
     let(:expected_attributes) { ['id', 'email'] }
 
     it 'create and return user' do
-      creator = FactoryBot.create(:user)
+      creator = create(:user)
       post("/users", params: { user: { email: email } }, headers: auth_headers(creator))
 
       expect(response).to have_http_status(:success)

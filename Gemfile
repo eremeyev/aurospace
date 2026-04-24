@@ -10,6 +10,7 @@ gem 'importmap-rails'
 gem 'turbo-rails'
 gem 'stimulus-rails'
 gem 'jbuilder'
+gem 'kaminari'
 
 gem 'tzinfo-data', platforms: %i[ windows jruby ]
 
@@ -42,6 +43,7 @@ group :development, :test do
   gem 'brakeman', require: false
 
   gem 'rubocop-rails-omakase', require: false
+  gem 'reek'
 end
 
 group :development do

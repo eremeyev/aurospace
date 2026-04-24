@@ -25,7 +25,7 @@ class ApiController < ActionController::API
 
       render(json: value, adapter: adapter, **serializer_options)
     when Failure
-      render(json: { error: normalize_failure(result.failure) }, status: :unprocessable_entity)
+      render(json: { error: normalize_failure(result.failure) }, status: :unprocessable_content)
     else
       render(json: { error: { code: 'internal_error', message: 'Unexpected result' } }, status: :internal_server_error)
     end
@@ -52,9 +52,9 @@ class ApiController < ActionController::API
   def normalize_failure(failure)
     case failure
     when Hash
-      { code: (failure[:code] || 'unprocessable_entity'), message: (failure[:base] || failure[:message] || failure.to_s) }
+      { code: (failure[:code] || 'unprocessable_content'), message: (failure[:base] || failure[:message] || failure.to_s) }
     else
-      { code: 'unprocessable_entity', message: failure.to_s }
+      { code: 'unprocessable_content', message: failure.to_s }
     end
   end
 end

@@ -10,29 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_22_155049) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_23_215050) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "orders", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "idempotency_key"
+    t.string "notes"
     t.bigint "payment_account_id"
     t.datetime "processed_at"
     t.integer "status", default: 0, null: false
     t.decimal "total_amount", precision: 10, scale: 2, default: "0.0", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
     t.index ["idempotency_key"], name: "index_orders_on_idempotency_key", unique: true
     t.index ["payment_account_id", "status"], name: "index_orders_on_payment_account_id_and_status"
     t.index ["payment_account_id"], name: "index_orders_on_payment_account_id"
-    t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
   create_table "payment_accounts", force: :cascade do |t|
+    t.integer "account_type", default: 0
     t.decimal "balance", precision: 10, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
+    t.string "currency", default: "ÚSD", null: false
     t.integer "lock_version", default: 0, null: false
+    t.string "name"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_payment_accounts_on_user_id"
@@ -56,13 +58,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_22_155049) do
     t.string "api_token", null: false
     t.datetime "created_at", null: false
     t.string "email", null: false
+    t.integer "role", default: 0
     t.datetime "updated_at", null: false
     t.index ["api_token"], name: "index_users_on_api_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   add_foreign_key "orders", "payment_accounts"
-  add_foreign_key "orders", "users"
   add_foreign_key "payment_accounts", "users"
   add_foreign_key "transactions", "orders"
   add_foreign_key "transactions", "payment_accounts"
